@@ -23,6 +23,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, resources={r"/.*": {"origins": ["*"]}})
 
+## db connection
 conn = psycopg2.connect(database="trademark1", user="tm_root",
                         password="roottm_9823a", host="trueint.lu.im.ntu.edu.tw", port="5433")
 cur = conn.cursor()
@@ -31,6 +32,8 @@ caseno_1000 = cur.fetchall()
 caseno_1000 = [x[0] for x in caseno_1000]
 conn.close()
 
+## routes
+imgFolderRoutes = "/home/metadragons/backend/uploadedImages/"
 
 @app.route('/function1', methods=["GET"])
 def function1():
@@ -228,46 +231,54 @@ def function5():
 @app.route("/postImageSearch", methods=['POST'])
 def imageSearch():
     startTime = time.time()
-    # print(request.method, file=sys.stdout)
     photo = request.form["file_attachment"]
+    photoWidth = request.form["photoWidth"]
+    photoHeight = request.form["photoHeight"]
+    indicatorX = request.form["indicatorX"]
+    indicatorY = request.form["indicatorY"]
+    userId = request.form["userId"]
+
+
     caseno_list1 = []
     if photo != "null":
-        # print(request.form['name'], file=sys.stdout)
-        dirr = time.strftime(
-            "/home/metadragons/backend/uploadedImages/%Y-%m-%d")
-        # print("dirr: ", dirr)
+        dirr = imgFolderRoutes + request.form['userId']
         os.makedirs(dirr, exist_ok=True)
-        filePath = "{}/{}.png".format(dirr, request.form['name'])
+        photoName = time.strftime("%Y-%m-%d-%H:%M:%S")
+
+        # save photo
+        filePath = "{}/{}.png".format(dirr, photoName)
         print(request.remote_addr, datetime.datetime.now(),
               "ImageSearch:", filePath, file=sys.stdout)
         with open(filePath, "wb") as f:
             img = base64.decodebytes(photo.encode('ascii'))
             f.write(img)
+
+        # loadModel
         startTime2 = time.time()
-        # caseno_list1 = random.sample(caseno_1000, 50)
-        caseno_list1 = model.single_img_retrieve(filePath)[:50]
-        # print("caseno_list1:", caseno_list1, file=sys.stdout)
+        # caseno_list1 = model.single_img_retrieve(filePath)[:50]
         EndTime2 = time.time()
+
         print("Time Spent(Image_Model): {}s".format(
             EndTime2 - startTime2), file=sys.stdout)
 
-    startTime4 = time.time()
-    base64Image_list, metadata_list = [], []
-    if photo != "null":
-        base64Image_list, metadata_list = load_images(
-            "Image", filePath, request.form['name'], caseno_list1)
+    # loadImage and metadatalist
+    # startTime4 = time.time()
+    # base64Image_list, metadata_list = [], []
+    # if photo != "null":
+    #     base64Image_list, metadata_list = load_images(
+    #         "Image", filePath, request.form['name'], caseno_list1)
 
-    EndTime4 = time.time()
-    print("Time Spent(load_images): {}s".format(
-        EndTime4 - startTime4), file=sys.stdout)
+    # EndTime4 = time.time()
+    # print("Time Spent(load_images): {}s".format(
+    #     EndTime4 - startTime4), file=sys.stdout)
 
-    EndTime = time.time()
-    print("Time Spent(postImageSearch): {}s".format(
-        EndTime - startTime), file=sys.stdout)
+    # EndTime = time.time()
+    # print("Time Spent(postImageSearch): {}s".format(
+    #     EndTime - startTime), file=sys.stdout)
 
     return jsonify({
-        'base64Images': base64Image_list,
-        'metadatas': metadata_list
+        'base64Images': [],
+        'metadatas': [],
     })
 
 
