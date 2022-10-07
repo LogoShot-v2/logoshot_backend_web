@@ -33,7 +33,7 @@ caseno_1000 = [x[0] for x in caseno_1000]
 conn.close()
 
 ## routes
-imgFolderRoutes = "/home/metadragons/backend/uploadedImages/"
+imgFolderRoutes = "imagelog/"
 
 @app.route('/function1', methods=["GET"])
 def function1():
