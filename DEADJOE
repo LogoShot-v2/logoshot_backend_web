@@ -19,3 +19,16 @@ app.py
 
 *** These modified files were found in JOE when it aborted on Mon Oct 10 12:01:33 2022
 *** JOE was aborted because the terminal closed
+
+*** These modified files were found in JOE when it aborted on Mon Oct 10 16:01:24 2022
+*** JOE was aborted because the terminal closed
+
+*** File '(Unnamed)'
+app.py
+/home/sylvey_lin/logoshot_backend_web/.git/MERGE_MSG
+
+*** File '* Startup Log *'
+Processing '/etc/joe/editorrc'...
+Processing '/etc/joe/ftyperc'...
+Finished processing /etc/joe/ftyperc
+Finished processing /etc/joe/editorrc

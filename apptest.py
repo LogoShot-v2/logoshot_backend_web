@@ -27,21 +27,25 @@ def imageSearch():
 
     caseno_list1 = []
     if photo != "null":
-        dirr = imgFolderRoutes + request.form['userId']
+        dirr = imgFolderRoutes + userId
         os.makedirs(dirr, exist_ok=True)
         photoName = time.strftime("%Y-%m-%d-%H:%M:%S")
 
         # save photo
-        filePath = "{}/{}.png".format(dirr, photoName)
+        phtoPath = "{}/{}.png".format(dirr, photoName)
+        infoPath = "{}/{}.txt".format(dirr, photoName)
         print(request.remote_addr, datetime.datetime.now(),
-              "ImageSearch:", filePath, file=sys.stdout)
-        with open(filePath, "wb") as f:
+              "ImageSearch:", phtoPath, file=sys.stdout)
+        with open(phtoPath, "wb") as f:
             img = base64.decodebytes(photo.encode('ascii'))
             f.write(img)
+        
+        with open(infoPath, "w") as f:
+            f.write(photoWidth + ' ' + photoHeight + ' ' + indicatorX + ' ' + indicatorY)
 
         # loadModel
         startTime2 = time.time()
-        # caseno_list1 = model.single_img_retrieve(filePath)[:50]
+        # caseno_list1 = model.single_img_retrieve(phtoPath)[:50]
         EndTime2 = time.time()
 
         print("Time Spent(Image_Model): {}s".format(
@@ -52,7 +56,7 @@ def imageSearch():
     # base64Image_list, metadata_list = [], []
     # if photo != "null":
     #     base64Image_list, metadata_list = load_images(
-    #         "Image", filePath, request.form['name'], caseno_list1)
+    #         "Image", phtoPath, request.form['name'], caseno_list1)
 
     # EndTime4 = time.time()
     # print("Time Spent(load_images): {}s".format(
