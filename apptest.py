@@ -5,14 +5,16 @@ import time
 import datetime
 import base64
 import sys
+from superApp202210 import esQuery
 
 from waitress import serve
 
 
 app = Flask(__name__)
 CORS(app, resources={r"/.*": {"origins": ["*"]}})
-## routes
+# routes
 imgFolderRoutes = "imagelog/"
+
 
 @app.route("/postImageSearch", methods=['POST'])
 def imageSearch():
@@ -23,7 +25,6 @@ def imageSearch():
     indicatorX = request.form["indicatorX"]
     indicatorY = request.form["indicatorY"]
     userId = request.form["userId"]
-
 
     caseno_list1 = []
     if photo != "null":
@@ -39,9 +40,10 @@ def imageSearch():
         with open(phtoPath, "wb") as f:
             img = base64.decodebytes(photo.encode('ascii'))
             f.write(img)
-        
+
         with open(infoPath, "w") as f:
-            f.write(photoWidth + ' ' + photoHeight + ' ' + indicatorX + ' ' + indicatorY)
+            f.write(photoWidth + ' ' + photoHeight +
+                    ' ' + indicatorX + ' ' + indicatorY)
 
         # loadModel
         startTime2 = time.time()
@@ -72,6 +74,28 @@ def imageSearch():
     })
 
 
+@app.route("/postTextSearch", methods=['POST'])
+def textSearch():
+    searchKeywords = request.form["searchKeywords"]
+    isSimSound = eval(request.form["isSimSound"].capitalize())
+    isSimShape = eval(request.form["isSimShape"].capitalize())
+    target_classcodes = eval(request.form["target_classcodes"])
+    target_color = request.form["target_color"]
+    target_applicant = request.form["target_applicant"]
+    target_startTime = request.form["target_startTime"]
+    target_endTime = request.form["target_endTime"]
+    print(searchKeywords, isSimSound, isSimShape, target_classcodes,
+          target_color, target_applicant, target_startTime, target_endTime)
+    print("Type:", type(target_classcodes))
+    # returnVal = []
+    returnVal = esQuery(searchKeywords, isSimSound, isSimShape, target_classcodes,
+                        target_color, target_applicant, target_startTime, target_endTime)
+
+    return jsonify({
+        'resultData': returnVal
+    })
+
+
 if __name__ == "__main__":
-    app.run('0.0.0.0', 8081)
+    app.run('0.0.0.0', 8082, debug=True)
     # serve(app, host="0.0.0.0", port=8081)

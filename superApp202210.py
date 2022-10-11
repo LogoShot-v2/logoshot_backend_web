@@ -18,7 +18,7 @@ es = Elasticsearch(
     # http_auth=('elastic', 'changeme')  # 認證資訊
 )
 
-df = pd.read_csv("../CNS_SUMMARY_TABLE.csv", encoding="utf8")
+df = pd.read_csv("./CNS_SUMMARY_TABLE.csv", encoding="utf8")
 # print(df)
 
 
@@ -75,13 +75,13 @@ def travel_es(es, result_list, **kwargs):
     res = es.search(**kwargs)
 
     sid = res['_scroll_id']
-    print("sid:", sid)
+    # print("sid:", sid)
 
     scroll_size = len(res['hits']['hits'])
-    print("scroll_size:", scroll_size)
+    # print("scroll_size:", scroll_size)
 
     total_size = scroll_size
-    print("total_size:", total_size)
+    # print("total_size:", total_size)
 
     result_list.append(res['hits']['hits'])
 
@@ -287,16 +287,16 @@ def esQuery(searchKeywords="", isSimSound=False, isSimShape=False, target_classc
     # print(sorted_result)
 
     # 【印出前十名】
-    print(*[(data[0][0], data[0][1], data[0][3])
-          for data in sorted_result[:10]], sep="\n")
+    # print(*[(data[0][0], data[0][1], data[0][3])
+    #       for data in sorted_result[:10]], sep="\n")
     # print(*sorted_result[:10], sep="\n")
 
     finalResult_IDList = [data[0][1] for data in sorted_result]
-    print(finalResult_IDList)
+    # print(finalResult_IDList)
     # 取回最後結果 id 在 elastic search 中的所有內容
     finalResult = es.mget(index="basesummary", body={
                           "ids": finalResult_IDList})["docs"]
-    print(finalResult)
+    # print(finalResult)
 
     return finalResult
 
