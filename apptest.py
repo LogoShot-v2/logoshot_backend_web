@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import Flask, jsonify, send_file, request, make_response
 from flask_cors import CORS
 import os
@@ -7,13 +8,51 @@ import base64
 import sys
 from superApp202210 import esQuery
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from waitress import serve
-
+import smtplib
+import jwt
 
 app = Flask(__name__)
 CORS(app, resources={r"/.*": {"origins": ["*"]}})
 # routes
 imgFolderRoutes = "imagelog/"
+## official email
+officialEmail = "ntuim2022@gmail.com"
+officialEmailPassword = "cdmqxdubwtbimvif"
+## ip to out
+ip = "http://10.129.214.198:8081/"
+
+@app.route("/registerVerify", methods=['POST'])
+def registerVerify():
+    content = request.json
+    email = content['email']
+    password = content['password']
+
+    content = MIMEMultipart()  #建立MIMEMultipart物件
+    content["subject"] = "Learn Code With Mike"  #郵件標題
+    content["from"] = officialEmail  #寄件者
+    content["to"] = email #收件者
+    
+    content.attach(MIMEText("點擊以下連結驗證\n" + ip + 'register'))  #郵件內容
+
+    with smtplib.SMTP(host="smtp.gmail.com", port="587") as smtp:  # 設定SMTP伺服器
+        try:
+            smtp.ehlo()  # 驗證SMTP伺服器
+            smtp.starttls()  # 建立加密傳輸
+            smtp.login(officialEmail, officialEmailPassword)  # 登入寄件者gmail
+            smtp.send_message(content)  # 寄送郵件
+            print("Complete!")
+        except Exception as e:
+            print("Error message: ", e)
+
+    return {"res": {"email": email}}
+
+@app.route("/register", methods=['GET'])
+def register():
+    print('register')
+    return {"res": {"status": "complete"}}
 
 
 @app.route("/postImageSearch", methods=['POST'])
@@ -97,5 +136,5 @@ def textSearch():
 
 
 if __name__ == "__main__":
-    app.run('0.0.0.0', 8082, debug=True)
+    app.run('0.0.0.0', 8081, debug=True)
     # serve(app, host="0.0.0.0", port=8081)
