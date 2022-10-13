@@ -6,13 +6,13 @@ import time
 import datetime
 import base64
 import sys
-from superApp202210 import esQuery
-
+# from superApp202210 import esQuery
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from waitress import serve
 import smtplib
-import jwt
+from tools.token import make_token, parseToken, decode_token
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/.*": {"origins": ["*"]}})
@@ -22,7 +22,7 @@ imgFolderRoutes = "imagelog/"
 officialEmail = "ntuim2022@gmail.com"
 officialEmailPassword = "cdmqxdubwtbimvif"
 ## ip to out
-ip = "http://10.129.214.198:8081/"
+ip = "http://140.112.106.82:8081/"
 
 @app.route("/registerVerify", methods=['POST'])
 def registerVerify():
@@ -34,8 +34,9 @@ def registerVerify():
     content["subject"] = "Learn Code With Mike"  #郵件標題
     content["from"] = officialEmail  #寄件者
     content["to"] = email #收件者
-    
-    content.attach(MIMEText("點擊以下連結驗證\n" + ip + 'register'))  #郵件內容
+    jwtEncodedUser = make_token({'email': email, 'password': password})
+    print(jwtEncodedUser)
+    content.attach(MIMEText("點擊以下連結驗證\n" + ip + 'register?token=' + jwtEncodedUser))  #郵件內容
 
     with smtplib.SMTP(host="smtp.gmail.com", port="587") as smtp:  # 設定SMTP伺服器
         try:
@@ -52,6 +53,10 @@ def registerVerify():
 @app.route("/register", methods=['GET'])
 def register():
     print('register')
+    token = request.args.get('token')
+    print(token)
+    decodedUser = decode_token(token)
+    print(decodedUser)
     return {"res": {"status": "complete"}}
 
 

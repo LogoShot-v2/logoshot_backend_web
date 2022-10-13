@@ -1,2 +1,3 @@
 register: 
 curl -X POST -H "Content-Type: application/json" -d '{"email" : "a.few.star@gmail.com", "password" : "1234"}' "http://127.0.0.1:8081/registerVerify"
+curl "http://127.0.0.1:8081/register?token=1234"
