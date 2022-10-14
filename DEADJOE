@@ -32,3 +32,25 @@ Processing '/etc/joe/editorrc'...
 Processing '/etc/joe/ftyperc'...
 Finished processing /etc/joe/ftyperc
 Finished processing /etc/joe/editorrc
+
+*** These modified files were found in JOE when it aborted on Fri Oct 14 18:28:28 2022
+*** JOE was aborted because the terminal closed
+
+*** File '/home/sylvey_lin/logoshot_backend_web/.git/MERGE_MSG'
+erge branch 'main' of https://github.com/LogoShot-v2/logoshot_backend_web into main
+# Please enter a commit message to explain why this merge is necessary,
+# especially if it merges an updated upstream into a topic branch.
+#
+# Lines starting with '#' will be ignored, and an empty message aborts
+# the commit.
+
+*** File '(Unnamed)'
+app.py
+/home/sylvey_lin/logoshot_backend_web/.git/MERGE_MSG
+/home/sylvey_lin/logoshot_backend_web/.git/MERGE_MSG
+
+*** File '* Startup Log *'
+Processing '/etc/joe/editorrc'...
+Processing '/etc/joe/ftyperc'...
+Finished processing /etc/joe/ftyperc
+Finished processing /etc/joe/editorrc
