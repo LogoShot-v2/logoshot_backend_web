@@ -1,3 +1,4 @@
 register: 
-curl -X POST -H "Content-Type: application/json" -d '{"email" : "a.few.star@gmail.com", "password" : "1234"}' "http://127.0.0.1:8081/registerVerify"
+curl -X POST -H "Content-Type: application/json" -d '{"name": "sylvey", "email" : "b08705007@ntu.edu.tw", "password" : "06745sylvii"}' "http://127.0.0.1:8081/registerVerify"
 curl "http://127.0.0.1:8081/register?token=1234"
+curl -X POST -H "Content-Type: application/json" -d '{"name": "sylvey", "email" : "sylvia.grey.lin@gmail.com", "password" : "06745sylvii"}' "http://127.0.0.1:8081/login"

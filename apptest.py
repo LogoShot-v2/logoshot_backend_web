@@ -1,5 +1,6 @@
 from crypt import methods
-from flask import Flask, jsonify, send_file, request, make_response
+import email
+from flask import Flask, jsonify, send_file, request, make_response, session
 from flask_cors import CORS
 import os
 import time
@@ -9,9 +10,25 @@ import sys
 from superApp202210 import esQuery
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from requests import session
 from waitress import serve
 import smtplib
 from tools.token import make_token, parseToken, decode_token
+
+import pyrebase
+
+config={
+  'apiKey': "AIzaSyA_xMc3DtQQp8GmAb9JkTHNWMcyhFiQrNM",
+  'authDomain': "logoshot-7c6a9.firebaseapp.com",
+  'projectId': "logoshot-7c6a9",
+  'storageBucket': "logoshot-7c6a9.appspot.com",
+  'messagingSenderId': "256049641924",
+  'appId': "1:256049641924:web:8e8a278f6b2186b9340c91",
+  'databaseURL': ''
+}
+
+firebase = pyrebase.initialize_app(config)
+auth = firebase.auth()
 
 
 app = Flask(__name__)
@@ -29,14 +46,16 @@ def registerVerify():
     content = request.json
     email = content['email']
     password = content['password']
+    name = content['name']
 
     content = MIMEMultipart()  #建立MIMEMultipart物件
-    content["subject"] = "Learn Code With Mike"  #郵件標題
+    content["subject"] = "LogoShot 註冊驗證"  #郵件標題
     content["from"] = officialEmail  #寄件者
     content["to"] = email #收件者
-    jwtEncodedUser = make_token({'email': email, 'password': password})
+    jwtEncodedUser = make_token({'name': name, 'email': email, 'password': password})
     print(jwtEncodedUser)
-    content.attach(MIMEText("點擊以下連結驗證\n" + ip + 'register?token=' + jwtEncodedUser))  #郵件內容
+    print("點擊以下連結驗證並註冊\n{}register?token={}".format(ip, jwtEncodedUser.decode("utf-8")))
+    content.attach(MIMEText("點擊以下連結驗證並註冊\n{}register?token={}".format(ip, jwtEncodedUser.decode("utf-8"))))  #郵件內容
 
     with smtplib.SMTP(host="smtp.gmail.com", port="587") as smtp:  # 設定SMTP伺服器
         try:
@@ -53,11 +72,31 @@ def registerVerify():
 @app.route("/register", methods=['GET'])
 def register():
     print('register')
+
     token = request.args.get('token')
-    print(token)
     decodedUser = decode_token(token)
+
+    user = auth.create_user_with_email_and_password(decodedUser['email'], decodedUser['password'])
+    print(user)
+    # doc_Ref = dbFireBase.collection(u'Users').document(decodedUser['name'])
+    # doc_Ref.set(decodedUser)
+
     print(decodedUser)
     return {"res": {"status": "complete"}}
+
+@app.route("/login", methods=['POST'])
+def login():
+    content = request.json
+    email = content['email']
+    password = content['password']
+    try:
+        user = auth.sign_in_with_email_and_password(email, password)
+        print(user)
+    except Exception as err: 
+        print(err)
+        return "Fail to login"
+    
+    return {"res": {"userId": user['localId']}}
 
 
 @app.route("/postImageSearch", methods=['POST'])
