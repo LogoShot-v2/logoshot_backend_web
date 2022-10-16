@@ -18,7 +18,7 @@ import smtplib
 from tools.token import make_token, parseToken, decode_token
 import cv2
 # import os
-# from yolov5.logo_detect import Yolo_Detect
+from yolov5.logo_detect import Yolo_Detect
 
 import pyrebase
 
